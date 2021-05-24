@@ -1,5 +1,5 @@
 pipeline {
-  agent {label "linux"}
+  agent {label "magento-2.4"}
   options {
     buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
   }
