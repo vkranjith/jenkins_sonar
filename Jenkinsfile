@@ -6,7 +6,10 @@ pipeline {
   stages {
     stage('Hello') {
       steps {
-        echo "Hello"
+        sh '''
+          echo "Hello"
+          pwd
+        '''
       }
     }
     stage('cat README') {
