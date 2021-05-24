@@ -9,6 +9,8 @@ pipeline {
         sh '''
           echo "Hello"
           pwd
+          rm -rf ./vendor/
+          composer install
         '''
       }
     }
