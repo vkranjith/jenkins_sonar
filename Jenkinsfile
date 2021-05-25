@@ -4,23 +4,24 @@ pipeline {
     buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
   }
   stages {
-    stage('Hello') {
+    stage('Build') {
       steps {
         sh '''
-          echo "Hello"
-          pwd
-          rm -rf ./vendor/
-          composer install
+          ~/built.sh
         '''
       }
     }
-    stage('cat README') {
+    stage('Deploy') {
       when {
         branch "fix-*"
       }
       steps {
         sh '''
+          echo "Starting the Deployment Process"
+          
           cat README.md
+          
+          echo "Completed the Deployment Process"
         '''
       }
     }
