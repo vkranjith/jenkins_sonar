@@ -4,16 +4,6 @@ pipeline {
     buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
   }
   stages {
-    stage('Install') {
-      when {
-        branch "fix-*"
-      }
-      steps {
-        sh '''
-          ~/install.sh
-        '''
-      }
-    }
     stage('Build') {
       steps {
         sh '''
