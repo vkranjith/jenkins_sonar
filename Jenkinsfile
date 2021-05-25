@@ -17,11 +17,7 @@ pipeline {
       }
       steps {
         sh '''
-          echo "Starting the Deployment Process"
-          
-          cat README.md
-          
-          echo "Completed the Deployment Process"
+          ~/deploy.sh
         '''
       }
     }
