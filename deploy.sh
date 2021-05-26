@@ -22,7 +22,7 @@ EOF
 rm app/etc/env.php
 
 # sync the combiled files
-rsync -razOev ./ $SERVER_USER@$SERVER_ADDRESS:$SERVER_LOCATION
+rsync -razOev ./ $SERVER_USER@$SERVER_ADDRESS:~/public_html/
 
 ssh $SERVER_USER@$SERVER_ADDRESS << EOF
 
