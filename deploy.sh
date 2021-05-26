@@ -1,41 +1,38 @@
 #!/bin/bash
 
-env;
-
 echo "Deploying the build files..."
 
-# ssh magento@192.168.56.104 touch $(date +filename%s.txt)
+# Check the variables and set default values if necessary
+if [ ! $SERVER_USER ]; then
+    SERVER_USER=magento
+fi
+if [ ! $SERVER_LOCATION ]; then
+    SERVER_LOCATION=~/public_html/
+fi
 
 # enabling the maintenance mode
-ssh magento@192.168.56.104 << EOF
+ssh $SERVER_USER@$SERVER_ADDRESS << EOF
 
-cd public_html/
+cd $SERVER_LOCATION
 bin/magento maintenance:enable
 
 EOF
 
-# echo $GIT_URL;
+# remove the deployed env.php file before delpoying or syncing it to the actual environment
 rm app/etc/env.php
 
 # sync the combiled files
-rsync -razOev ./ magento@192.168.56.104:~/public_html/
+rsync -razOev ./ $SERVER_USER@$SERVER_ADDRESS:$SERVER_LOCATION
 
-ssh magento@192.168.56.104 << EOF
+ssh $SERVER_USER@$SERVER_ADDRESS << EOF
 
-cd public_html/
+cd $SERVER_LOCATION
 echo "Current directory for deployment:"
 pwd
 
 # remove all GIT files
 rm -rf .git/
-
 bin/magento set:up
-# rm -rf jenkins_build
-# cp -r jenkins jenkins_build
-# cd jenkins_build
-# git pull
-# git status
-
 bin/magento maintenance:disable
 
 EOF
