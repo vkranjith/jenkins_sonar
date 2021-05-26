@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('Build') {
             environment {
-                ADMIN_URL='manger_test'
+                ADMIN_URL='manager_test'
             }
             steps {
                 sh '''
@@ -18,9 +18,12 @@ pipeline {
             when {
                 branch "fix-*"
             }
+            environment {
+                SERVER_LOCATION=192.168.56.104
+            }
             steps {
                 sh '''
-                    # ~/deploy.sh
+                    ~/deploy.sh
                 '''
             }
         }
