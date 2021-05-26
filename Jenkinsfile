@@ -19,7 +19,7 @@ pipeline {
                 branch "fix-*"
             }
             environment {
-                SERVER_LOCATION=192.168.56.104
+                SERVER_LOCATION='192.168.56.104'
             }
             steps {
                 sh '''
