@@ -71,7 +71,8 @@ if [ ! $SERVER_LOCATION ]; then
     SERVER_LOCATION=~/public_html/
 fi
 
-SERVER_BUILD_LOCATION=$SERVER_LOCATION.tmp
+# remove trailing forward slash "/" from the path and add ".tmp"
+SERVER_BUILD_LOCATION=$(echo $SERVER_LOCATION | sed 's/\/$//g').tmp
 
 echo "Server Location..."
 echo $SERVER_BUILD_LOCATION
