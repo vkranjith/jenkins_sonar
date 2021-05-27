@@ -24,7 +24,7 @@ if [ ! $DATABASE_USERNAME ]; then
 fi
 
 if [ ! $DATABASE_PASSWORD ]; then
-    DATABASE_PASSWORD=''
+    DATABASE_PASSWORD=""
 fi
 
 if [ ! $APP_URL ]; then
@@ -105,21 +105,7 @@ rm -rf var/report/*
 
 # Check if the env.php file exists and if not, install the app
 if [ ! -f $ENV_FILE ]; then
-  bin/magento setup:install --backend-frontname="$ADMIN_URL" \
-    --db-host="$DATABASE_HOST" \
-    --db-name="$DATABASE_NAME" \
-    --db-user="$DATABASE_USERNAME" \
-    --db-password="$DATABASE_PASSWORD" \
-    --base-url="$APP_URL" \
-    --use-rewrites="1" \
-    --admin-user="$ADMIN_USER" \
-    --admin-password="$ADMIN_PASSWORD" \
-    --admin-email="$ADMIN_EMAIL" \
-    --admin-firstname="$ADMIN_FNAME" \
-    --admin-lastname="$ADMIN_LNAME" \
-    --search-engine="$ELASTICSEARCH_VERSION" \
-    --elasticsearch-host="$ELASTICSEARCH_HOST" \
-    --elasticsearch-port="$ELASTICSEARCH_PORT"
+  bin/magento setup:install
 fi
 
 # deploy and compile
