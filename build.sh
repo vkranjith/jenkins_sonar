@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# env;
-
 echo "Starting the Build Process..."
 
 # Set any variables
@@ -65,6 +63,25 @@ if [ ! $DEPLOY_MODE ]; then
     DEPLOY_MODE=developer
 fi
 
+if [ ! $SERVER_USER ]; then
+    SERVER_USER=magento
+fi
+
+if [ ! $SERVER_LOCATION ]; then
+    SERVER_LOCATION=~/public_html/
+fi
+
+SERVER_BUILD_LOCATION=$SERVER_LOCATION.tmp
+
+ssh $SERVER_USER@$SERVER_ADDRESS << EOF
+
+if [ ! -d "$SERVER_BUILD_LOCATION ]; then
+    cp -r $SERVER_LOCATION $SERVER_BUILD_LOCATION
+fi
+
+cd $SERVER_BUILD_LOCATION
+echo "Current directory for deployment:"
+pwd
 
 # clean up the vendor files and pull a fresh copy
 rm -rf vendor/*
@@ -107,5 +124,7 @@ bin/magento setup:upgrade
 bin/magento deploy:mode:set $DEPLOY_MODE
 bin/magento setup:di:compile
 bin/magento setup:static-content:deploy -f
+
+EOF
 
 echo "Completed the Build Process..."
