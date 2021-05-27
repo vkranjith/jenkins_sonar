@@ -69,8 +69,8 @@ if [ ! $SERVER_USER ]; then
     SERVER_USER=$FILE_OWNER
 fi
 
-if [ ! -d $SERVER_LOCATION ]; then
-    set SERVER_LOCATION=~/home/$FILE_OWNER/public_html/
+if [ ! $SERVER_LOCATION ]; then
+    set SERVER_LOCATION=/home/$FILE_OWNER/public_html/
 fi
 
 # remove trailing forward slash "/" from the path and add ".tmp"
