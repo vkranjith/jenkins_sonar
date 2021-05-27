@@ -36,7 +36,7 @@ if [ ! $ADMIN_USER ]; then
 fi
 
 if [ ! $ADMIN_PASSWORD ]; then
-    ADMIN_PASSWORD=date +%s | sha256sum | base64 | head -c 16
+    ADMIN_PASSWORD=$(date +%s | sha256sum | base64 | head -c 16)
 fi
 
 if [ ! $ADMIN_FNAME ]; then
