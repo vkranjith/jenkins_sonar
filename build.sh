@@ -67,9 +67,6 @@ if [ ! $SERVER_USER ]; then
     SERVER_USER=magento
 fi
 
-echo "Server Location..."
-echo $SERVER_BUILD_LOCATION
-
 ssh $SERVER_USER@$SERVER_ADDRESS << EOF
 
 if [ ! $SERVER_LOCATION ]; then
@@ -78,6 +75,9 @@ fi
 
 # remove trailing forward slash "/" from the path and add ".tmp"
 SERVER_BUILD_LOCATION=$(echo $SERVER_LOCATION | sed 's/\/$//g').tmp
+
+echo "Server Location..."
+echo $SERVER_BUILD_LOCATION
 
 
 if [ ! -d "$SERVER_BUILD_LOCATION" ]; then
