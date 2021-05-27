@@ -24,7 +24,7 @@ pipeline {
             }
             steps {
                 sh '''
-                    ~/deploy.sh
+                    ~/build.sh
                 '''
             }
         }
