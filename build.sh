@@ -24,7 +24,7 @@ if [ ! $DATABASE_USERNAME ]; then
 fi
 
 if [ ! $DATABASE_PASSWORD ]; then
-    DATABASE_PASSWORD=""
+    DATABASE_PASSWORD=''
 fi
 
 if [ ! $APP_URL ]; then
@@ -77,9 +77,9 @@ SERVER_BUILD_LOCATION=$(echo $SERVER_LOCATION | sed 's/\/$//g').tmp
 echo "Server Location..."
 echo $SERVER_BUILD_LOCATION
 
-ssh $SERVER_USER@192.168.56.104 << EOF
+ssh $SERVER_USER@$SERVER_ADDRESS << EOF
 
-if [ ! -d "$SERVER_BUILD_LOCATION ]; then
+if [ ! -d "$SERVER_BUILD_LOCATION" ]; then
     cp -r $SERVER_LOCATION $SERVER_BUILD_LOCATION
 fi
 
@@ -105,7 +105,22 @@ rm -rf var/report/*
 
 # Check if the env.php file exists and if not, install the app
 if [ ! -f $ENV_FILE ]; then
-  bin/magento setup:install
+  bin/magento setup:install \
+    --backend-frontname="$ADMIN_URL" \
+    --db-host="$DATABASE_HOST" \
+    --db-name="$DATABASE_NAME" \
+    --db-user="$DATABASE_USERNAME" \
+    --db-password="$DATABASE_PASSWORD" \
+    --base-url="$APP_URL" \
+    --use-rewrites="1" \
+    --admin-user="$ADMIN_USER" \
+    --admin-password="$ADMIN_PASSWORD" \
+    --admin-email="$ADMIN_EMAIL" \
+    --admin-firstname="$ADMIN_FNAME" \
+    --admin-lastname="$ADMIN_LNAME" \
+    --search-engine="$ELASTICSEARCH_VERSION" \
+    --elasticsearch-host="$ELASTICSEARCH_HOST" \
+    --elasticsearch-port="$ELASTICSEARCH_PORT"
 fi
 
 # deploy and compile
