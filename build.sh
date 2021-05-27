@@ -63,18 +63,16 @@ if [ ! $DEPLOY_MODE ]; then
     DEPLOY_MODE=developer
 fi
 
-if [ ! $SERVER_USER ]; then
-    SERVER_USER=magento
+if [ ! $FILE_OWNER ]; then
+    FILE_OWNER=magento
 fi
 
-ssh $SERVER_USER@$SERVER_ADDRESS << EOF
+if [ ! $SERVER_USER ]; then
+    SERVER_USER=$FILE_OWNER
+fi
 
 if [ ! -d $SERVER_LOCATION ]; then
-    SERVER_LOCATION=~/public_html/
-    echo "Empty Location value: $SERVER_LOCATION"
-fi
-if [ -d $SERVER_LOCATION ]; then
-    echo "Location Exists: $SERVER_LOCATION"
+    set SERVER_LOCATION=~/home/$FILE_OWNER/public_html/
 fi
 
 echo "Location: $SERVER_LOCATION"
@@ -85,23 +83,24 @@ SERVER_BUILD_LOCATION=$(echo $SERVER_LOCATION | sed 's/\/$//g').tmp
 echo "Server Location..."
 echo $SERVER_BUILD_LOCATION
 
-
-if [ ! -d "$SERVER_BUILD_LOCATION" ]; then
-    cp -r $SERVER_LOCATION $SERVER_BUILD_LOCATION
-fi
+ssh $FILE_OWNER@$SERVER_ADDRESS << EOF
 
 cd $SERVER_BUILD_LOCATION
 echo "Current directory for build:"
 pwd
 
+# clean and pull the latest code
+git reset --hard HEAD
+# assuming the current branch is the correct branch to build and deploy
+git pull 
+
 # clean up the vendor files and pull a fresh copy
 rm -rf vendor/*
 composer install
-# chown -R jenkins:jenkins ./
+chown -R $FILE_OWNER:$SERVER_USER ./
 
 # set appropriate permissions for the build
 chmod +x bin/magento
-
 
 # clean the previously generated deployment and compiled files
 rm -r var/view_preprocessed/*
@@ -133,9 +132,10 @@ fi
 # deploy and compile
 bin/magento app:config:import
 bin/magento setup:upgrade
-bin/magento deploy:mode:set $DEPLOY_MODE
+bin/magento deploy:mode:set developer
 bin/magento setup:di:compile
 bin/magento setup:static-content:deploy -f
+bin/magento deploy:mode:set $DEPLOY_MODE
 
 EOF
 
