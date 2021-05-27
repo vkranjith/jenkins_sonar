@@ -80,7 +80,7 @@ if [ ! -d "$SERVER_BUILD_LOCATION ]; then
 fi
 
 cd $SERVER_BUILD_LOCATION
-echo "Current directory for deployment:"
+echo "Current directory for build:"
 pwd
 
 # clean up the vendor files and pull a fresh copy
