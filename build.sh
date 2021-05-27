@@ -73,6 +73,9 @@ fi
 
 SERVER_BUILD_LOCATION=$SERVER_LOCATION.tmp
 
+echo "Server Location..."
+echo $SERVER_BUILD_LOCATION
+
 ssh $SERVER_USER@$SERVER_ADDRESS << EOF
 
 if [ ! -d "$SERVER_BUILD_LOCATION ]; then
