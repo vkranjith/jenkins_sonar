@@ -69,11 +69,15 @@ fi
 
 ssh $SERVER_USER@$SERVER_ADDRESS << EOF
 
-if [ ! $SERVER_LOCATION ]; then
+if [ ! -d $SERVER_LOCATION ]; then
     SERVER_LOCATION=~/public_html/
+    echo "Empty Location value: $SERVER_LOCATION"
+fi
+if [ -d $SERVER_LOCATION ]; then
+    echo "Location Exists: $SERVER_LOCATION"
 fi
 
-echo $SERVER_LOCATION
+echo "Location: $SERVER_LOCATION"
 
 # remove trailing forward slash "/" from the path and add ".tmp"
 SERVER_BUILD_LOCATION=$(echo $SERVER_LOCATION | sed 's/\/$//g').tmp
