@@ -6,6 +6,7 @@ pipeline {
     stages {
         stage('Build') {
             environment {
+                SERVER_LOCATION='192.168.56.104'
                 ADMIN_URL='manager_test'
             }
             steps {
