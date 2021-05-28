@@ -4,7 +4,17 @@ pipeline {
         buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
     }
     stages {
+        stage('Scanning') {
+            steps {
+                sh '''
+                    echo "Scanning through the files for development standard check"
+                '''
+            }
+        }
         stage('Build') {
+            when {
+                branch "fix-*"
+            }
             environment {
                 SERVER_ADDRESS='192.168.56.104'
             }
