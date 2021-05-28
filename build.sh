@@ -121,7 +121,7 @@ ssh $FILE_OWNER@$SERVER_ADDRESS << EOF
         bin/magento maintenance:enable
 
         # sync the build files
-        rsync -rv $SERVER_BUILD_LOCATION/* $SERVER_LOCATION
+        rsync -rav $SERVER_BUILD_LOCATION/* $SERVER_LOCATION
 
         # remove all GIT files
         rm -rf .git/
