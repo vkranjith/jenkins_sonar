@@ -3,12 +3,6 @@
 # Set any variables
 ENV_FILE=app/etc/env.php
 
-# Check the variables and set default values if necessary
-if [ ! $ADMIN_URL ]; then
-    # generate random admin url frontname
-    ADMIN_URL=manage_$(date +%s | sha256sum | base64 | head -c 8)
-fi
-
 if [ ! $DATABASE_HOST ]; then
     DATABASE_HOST=localhost:3306
 fi
@@ -27,22 +21,6 @@ fi
 
 if [ ! $APP_URL ]; then
     APP_URL=http://localhost/
-fi
-
-if [ ! $ADMIN_USER ]; then
-    ADMIN_USER=admin_$(date +%s | sha256sum | base64 | head -c 8)
-fi
-
-if [ ! $ADMIN_PASSWORD ]; then
-    ADMIN_PASSWORD=$(date +%s | sha256sum | base64 | head -c 16)
-fi
-
-if [ ! $ADMIN_FNAME ]; then
-    ADMIN_FNAME=admin
-fi
-
-if [ ! $ADMIN_LNAME ]; then
-    ADMIN_LNAME=admin
 fi
 
 if [ ! $ELASTICSEARCH_VERSION ]; then
@@ -69,8 +47,8 @@ if [ ! $SERVER_USER ]; then
     SERVER_USER=$FILE_OWNER
 fi
 
-if [ ! $SERVER_LOCATION ]; then
-    SERVER_LOCATION=/home/$FILE_OWNER/public_html/
+if [ ! -d $SERVER_LOCATION ]; then
+    set SERVER_LOCATION=~/home/$FILE_OWNER/public_html/
 fi
 
 # remove trailing forward slash "/" from the path and add ".tmp"
@@ -90,14 +68,6 @@ ssh $FILE_OWNER@$SERVER_ADDRESS << EOF
         # assuming the current branch is the correct branch to build and deploy
         git pull
 
-        # clean up the vendor files and pull a fresh copy
-        rm -rf vendor/*
-        composer install
-        chown -R $FILE_OWNER:$SERVER_USER ./
-
-        # set appropriate permissions for the build
-        chmod +x bin/magento
-
         # clean the previously generated deployment and compiled files
         rm -r var/view_preprocessed/*
         rm -r pub/static/*/*
@@ -105,21 +75,29 @@ ssh $FILE_OWNER@$SERVER_ADDRESS << EOF
         rm -r var/log/*
         rm -rf var/report/*
 
+        # set appropriate permissions for the build
+        find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
+        find var generated vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
+        chown -R $FILE_OWNER:$SERVER_USER .
+        chmod u+x bin/magento
+
+        # clean up the vendor files and pull a fresh copy
+        rm -rf vendor/*
+        composer install
+        chown -R $FILE_OWNER:$SERVER_USER ./
+
         # Check if the env.php file exists and if not, install the app
         if [ ! -f $ENV_FILE ]; then
           bin/magento setup:install \
-            --backend-frontname="$ADMIN_URL" \
             --db-host="$DATABASE_HOST" \
             --db-name="$DATABASE_NAME" \
             --db-user="$DATABASE_USERNAME" \
             --db-password="$DATABASE_PASSWORD" \
             --base-url="$APP_URL" \
             --use-rewrites="1" \
-            --admin-user="$ADMIN_USER" \
-            --admin-password="$ADMIN_PASSWORD" \
-            --admin-email="$ADMIN_EMAIL" \
-            --admin-firstname="$ADMIN_FNAME" \
-            --admin-lastname="$ADMIN_LNAME" \
+            --language=en_US \
+            --currency=USD \
+            --timezone=America/Chicago \
             --search-engine="$ELASTICSEARCH_VERSION" \
             --elasticsearch-host="$ELASTICSEARCH_HOST" \
             --elasticsearch-port="$ELASTICSEARCH_PORT"
@@ -147,7 +125,10 @@ ssh $FILE_OWNER@$SERVER_ADDRESS << EOF
 
         # remove all GIT files
         rm -rf .git/
-        bin/magento set:up
+
+        # set the file permissions
+
+
         bin/magento maintenance:disable
 
         echo "Deployment complete";
