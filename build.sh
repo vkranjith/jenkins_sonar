@@ -121,13 +121,12 @@ ssh $FILE_OWNER@$SERVER_ADDRESS << EOF
         bin/magento maintenance:enable
 
         # sync the build files
+        echo "Deploying the build files..."
         rsync -ra $SERVER_BUILD_LOCATION/* $SERVER_LOCATION
+        echo "Deploying files complete"
 
         # remove all GIT files
         rm -rf .git/
-
-        # set the file permissions
-
 
         bin/magento maintenance:disable
 
